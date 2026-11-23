@@ -17,6 +17,12 @@ REPLY = (
 
 
 def main() -> None:
+    # Gate guard: the entry is only valid as 1-160 characters of UTF-8 text
+    # on a single line, so refuse to write anything that breaks the gate.
+    if not 1 <= len(REPLY) <= 160:
+        raise ValueError(f"reply is {len(REPLY)} characters, must be 1-160")
+    if "\n" in REPLY or "\r" in REPLY:
+        raise ValueError("reply must be a single line")
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "entry.txt")
